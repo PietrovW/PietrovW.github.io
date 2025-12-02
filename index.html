@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENTIRE M: PROTOCOL | Operation Zero Kelvin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --color-bg: #050510;
+            --color-primary: #00E5FF;
+            --color-secondary: #FF2A68;
+            --color-text: #E0E0E0;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* --- CRT SCANLINE EFFECT --- */
+        .scanline {
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 50%, rgba(255, 255, 255, 0.02) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 2px, 3px 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .scanline::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+
+        /* --- GLITCH EFFECT --- */
+        .glitch-wrapper {
+            position: relative;
+        }
+
+        .glitch {
+            font-size: 4rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            color: white;
+            letter-spacing: 0.1em;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 var(--color-secondary);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 var(--color-primary);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            4.16% { clip: rect(70px, 9999px, 19px, 0); }
+            8.33% { clip: rect(6px, 9999px, 13px, 0); }
+            100% { clip: rect(59px, 9999px, 95px, 0); }
+        }
+
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 99px, 0); }
+            100% { clip: rect(4px, 9999px, 86px, 0); }
+        }
+
+        /* --- GRID BACKGROUND --- */
+        .cyber-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--color-primary) 1px, transparent 1px),
+                linear-gradient(90deg, var(--color-primary) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: center center;
+            opacity: 0.05;
+            z-index: -1;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) scale(2);
+            animation: grid-move 20s linear infinite;
+        }
+
+        @keyframes grid-move {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0) scale(2); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px) scale(2); }
+        }
+
+        /* --- BUTTONS --- */
+        .btn-cyber {
+            background: transparent;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            padding: 15px 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-cyber:hover {
+            background: var(--color-primary);
+            color: black;
+            box-shadow: 0 0 20px var(--color-primary);
+        }
+
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-cyber:hover::before {
+            left: 100%;
+        }
+
+        /* --- CURSOR --- */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background-color: var(--color-primary);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+    </style>
+</head>
+<body class="crt-flicker flex flex-col min-h-screen relative">
+
+    <!-- Efekty Tła -->
+    <div class="scanline"></div>
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="cyber-grid"></div>
+    </div>
+
+    <!-- Nawigacja -->
+    <nav class="p-6 flex justify-between items-center border-b border-white/10 bg-black/50 backdrop-blur-sm z-10 relative">
+        <div class="text-2xl font-bold tracking-widest text-white">
+            <span class="text-cyan-400">ENTIRE</span> M
+        </div>
+        <div class="text-xs text-gray-500 hidden md:block">
+            STATUS SERWERA: <span class="text-green-500 animate-pulse">ONLINE</span>
+        </div>
+    </nav>
+
+    <!-- Główna Treść (Hero) -->
+    <main class="flex-grow flex flex-col items-center justify-center text-center px-4 relative z-10">
+        
+        <div class="mb-4 text-xs md:text-sm text-red-500 border border-red-500/50 px-2 py-1 tracking-[0.3em] bg-red-900/10">
+            ALERT KRYTYCZNY: WUWA POINT
+        </div>
+
+        <div class="glitch-wrapper mb-6">
+            <h1 class="glitch text-5xl md:text-8xl" data-text="ENTIRE M">ENTIRE M</h1>
+        </div>
+        
+        <h2 class="text-xl md:text-3xl text-white/80 mb-12 tracking-[0.5em] font-light">
+            PROTOCOL: <span class="text-cyan-400 font-bold">ZERO KELVIN</span>
+        </h2>
+
+        <!-- Terminal Tekstowy -->
+        <div class="w-full max-w-2xl bg-black/80 border border-white/20 p-6 rounded text-left mb-12 shadow-2xl relative group">
+            <div class="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-cyan-400"></div>
+            <div class="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-cyan-400"></div>
+            <div class="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-cyan-400"></div>
+            <div class="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-cyan-400"></div>
+            
+            <div class="text-green-500 text-sm mb-2 opacity-50">root@entire-m:~/logs# cat alert.log</div>
+            <p id="typewriter" class="text-gray-300 text-sm md:text-base leading-relaxed h-[120px] md:h-[100px]"></p>
+            <span class="cursor"></span>
+        </div>
+
+        <!-- Przyciski -->
+        <div class="flex flex-col md:flex-row gap-6">
+            <a href="#" class="btn-cyber">DOŁĄCZ DO OPERACJI</a>
+            <a href="#" class="text-gray-400 hover:text-white px-8 py-4 flex items-center gap-2 transition border border-transparent hover:border-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                DOKUMENTACJA
+            </a>
+        </div>
+
+    </main>
+
+    <!-- Stopka -->
+    <footer class="p-6 border-t border-white/10 text-center text-xs text-gray-600 relative z-10 bg-black/80">
+        <div class="flex justify-center gap-8 mb-4">
+            <div>
+                <div class="text-cyan-400 font-bold text-xl mb-1">150+</div>
+                <div>ANOMALII</div>
+            </div>
+
+            <div>
+                <div class="text-purple-500 font-bold text-xl mb-1">GPS</div>
+                <div>MAPA</div>
+            </div>
+        </div>
+        <p class="mt-2 font-mono opacity-50">SYSTEM VERSION: 0.9.1-BETA</p>
+    </footer>
+
+    <script>
+        // --- TYPEWRITER EFFECT ---
+        const textToType = [
+            "Wykryto masowe naruszenie struktury rzeczywistości we Wrocławiu.",
+            "Wirus 'SZRON_X' przejmuje kontrolę nad infrastrukturą miejską.",
+            "Potrzebujemy Operatorów. Twoje urządzenie jest kompatybilne.",
+            "Zlokalizuj Rdzenie Kwantowe. Zneutralizuj zagrożenie. Przetrwaj."
+        ];
+
+        const typeWriterElement = document.getElementById('typewriter');
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (lineIndex < textToType.length) {
+                if (charIndex < textToType[lineIndex].length) {
+                    typeWriterElement.innerHTML += textToType[lineIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 30); // Prędkość pisania
+                } else {
+                    typeWriterElement.innerHTML += "<br>> "; // Nowa linia
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeWriter, 500); // Pauza między liniami
+                }
+            }
+        }
+
+        // Start po załadowaniu
+        window.onload = function() {
+            setTimeout(typeWriter, 1000);
+        };
+    </script>
+</body>
+</html>
