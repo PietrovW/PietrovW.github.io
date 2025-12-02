@@ -233,13 +233,11 @@
 
         <!-- Przyciski -->
         <div class="flex flex-col md:flex-row gap-6">
-            <a href="#" class="btn-cyber">DOŁĄCZ DO OPERACJI</a>
-            <a href="#" class="text-gray-400 hover:text-white px-8 py-4 flex items-center gap-2 transition border border-transparent hover:border-gray-600">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                DOKUMENTACJA
-            </a>
+            <a href="#" id="showImageBtn" class="btn-cyber">DOŁĄCZ DO OPERACJI</a>
         </div>
-
+<div id="imageContainer" class="hidden mt-6 transition-all duration-500">
+    <img src="https://raw.githubusercontent.com/PietrovW/PietrovW.github.io/refs/heads/main/QR.png" alt="Zdjęcie operacji" class="rounded-lg shadow-xl border border-cyan-500">
+</div>
     </main>
 
     <!-- Stopka -->
@@ -290,6 +288,27 @@
         window.onload = function() {
             setTimeout(typeWriter, 1000);
         };
+
+
+
+        // 1. Pobieramy elementy z drzewa DOM
+    const button = document.getElementById('showImageBtn');
+    const imageContainer = document.getElementById('imageContainer');
+
+    // 2. Nasłuchujemy kliknięcia
+    button.addEventListener('click', function(event) {
+        
+        // Ważne: Zapobiegamy domyślnej akcji linku (przeładowaniu strony/#)
+        event.preventDefault();
+
+        // 3. Przełączamy klasę 'hidden' (jeśli jest - usuwa, jeśli nie ma - dodaje)
+        imageContainer.classList.toggle('hidden');
+        
+        // Opcjonalnie: Jeśli chcesz, aby zdjęcie tylko się pojawiało (bez znikania przy drugim kliknięciu),
+        // zamiast .toggle() użyj: imageContainer.classList.remove('hidden');
+    });
     </script>
+    
 </body>
+ <footer class="p-6 border-t border-white/10 text-center text-xs text-gray-600 relative z-10 bg-black/80">
 </html>
